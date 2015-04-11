@@ -4,18 +4,20 @@ import java.util.ArrayList;
 
 public class BibliotecaApp
 {
-	public ArrayList<String> books = new ArrayList<String>();
+	public ArrayList<Book> books = new ArrayList<Book>();
 
 	public BibliotecaApp()
 	{
 
 		addDefaultBooks();
+
 	}
 
 	public static void main(String[] args)
 	{
 		BibliotecaApp bib = new BibliotecaApp();
 		System.out.println(bib.getWelcomeMessage());
+		bib.showMainMenu();
 	}
 
 	public String getWelcomeMessage()
@@ -23,21 +25,37 @@ public class BibliotecaApp
 		return "Welcome to Biblioteca";
 	}
 
-	public ArrayList<String> getBookList()
+	private void showMainMenu()
+	{
+		System.out.println("Which of the following would you like to do? ");
+		System.out.println("1: List books");
+
+	}
+
+	public ArrayList<Book> getBookList()
 	{
 		return books;
 	}
 
-	public void addBook(String name)
+	public void addBook(String name, String author, int year)
 	{
-		books.add(name);
+		books.add(new Book(name, author, year));
 	}
 
 	public void addDefaultBooks()
 	{
-		addBook("Hello");
-		addBook("World");
-		addBook("is");
-		addBook("great");
+		addBook("Hello", "tom", 938);
+		addBook("World", "horse", 18312);
+		addBook("is", "Aidan", 19284);
+		addBook("great", "Megan", 1999);
+	}
+
+	public void printBookDetails()
+	{
+		ArrayList<Book> books = getBookList();
+		for (Book book : books)
+		{
+			System.out.println(book);
+		}
 	}
 }
