@@ -52,7 +52,7 @@ public class BibliotecaApp
 			mainMenu();
 			break;
 		case 3:
-			printBookDetails();
+			returnBook();
 			mainMenu();
 			break;
 		case 4:
@@ -61,6 +61,31 @@ public class BibliotecaApp
 			System.out.println("Select a valid option!");
 			mainMenu();
 
+		}
+
+	}
+
+	private void returnBook()
+	{
+		String name, author, year;
+		try
+		{
+			Scanner sc = new Scanner(System.in);
+			System.out
+					.println("Please enter the Name of the book you wish to return: ");
+			name = sc.nextLine();
+			System.out
+					.println("Please enter the Author of the book you wish to return: ");
+			author = sc.nextLine();
+			System.out
+					.println("Please enter the Year of Publication of the book you wish to return: ");
+			year = sc.nextLine();
+			addBook(name, author, Integer.parseInt(year));
+			System.out.println("Thank you for returning the book.");
+		}
+		catch (Exception e)
+		{
+			System.out.println("That is not a valid book to return.");
 		}
 
 	}
@@ -96,28 +121,39 @@ public class BibliotecaApp
 
 	public boolean pickBookToCheckout()
 	{
-		int input;
-		Scanner sc = new Scanner(System.in);
-		printBookDetails();
-		System.out
-				.println("Please select the book number you wish to checkout");
-		input = Integer.parseInt(sc.nextLine());
-		Book book = getBookList().get(input);
-		return checkoutBook(book.getName(), book.getAuthor(), book.getYear());
+		try
+		{
+			int input;
+			Scanner sc = new Scanner(System.in);
+			printBookDetails();
+			System.out
+					.println("Please select the book number you wish to checkout");
+			input = Integer.parseInt(sc.nextLine());
+			Book book = getBookList().get(input - 1);
+			return checkoutBook(book.getName(), book.getAuthor(),
+					book.getYear());
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
 	}
 
 	public boolean checkoutBook(String name, String author, int year)
 	{
 		ArrayList<Book> bookList = getBookList();
+		int curr = 0;
 		for (Book book : bookList)
 		{
+
 			if (book.getName().equals(name))
 				if (book.getAuthor().equals(author))
 					if (book.getYear() == year)
 					{
-						bookList.remove(book);
+						bookList.remove(curr);
 						return true;
 					}
+			curr++;
 		}
 		return false;
 	}
