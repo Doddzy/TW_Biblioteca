@@ -15,7 +15,7 @@ public class Book
 	public String toString()
 	{
 		return "Name: " + getName() + " Author: " + getAuthor()
-				+ " Year published: " + getYear() + "\n";
+				+ " Year published: " + getYear();
 	}
 
 	public String getName()

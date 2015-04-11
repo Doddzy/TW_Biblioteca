@@ -1,5 +1,6 @@
 package com.twu.biblioteca;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +52,7 @@ public class BasicFunctionalityTests
 	@Test
 	public void testBooktoString()
 	{
-		assertEquals("Name: Hello Author: tom Year published: 938\n", new Book(
+		assertEquals("Name: Hello Author: tom Year published: 938", new Book(
 				"Hello", "tom", 938).toString());
 	}
 
@@ -78,5 +79,46 @@ public class BasicFunctionalityTests
 		int bookListSize = bib.getBookList().size();
 		bib.addBook("new", "book", 7363);
 		assertTrue(bookListSize < bib.getBookList().size());
+	}
+
+	@Test
+	public void testCheckoutBookRemovesABook()
+	{
+		BibliotecaApp bib = new BibliotecaApp();
+		int bookListSize = bib.getBookList().size();
+		bib.checkoutBook("great", "Megan", 1999);
+		assertTrue(bookListSize > bib.getBookList().size());
+	}
+
+	@Test
+	public void testCheckoutCanFail()
+	{
+		assertFalse(new BibliotecaApp().checkoutBook("fghfghfghfg", "Megan",
+				1999));
+	}
+
+	@Test
+	public void testCheckoutDoesNotRemovesABookOnFail()
+	{
+		BibliotecaApp bib = new BibliotecaApp();
+		int bookListSize = bib.getBookList().size();
+		bib.checkoutBook("greatdsdad", "Megan", 1999);
+		assertEquals(bookListSize, bib.getBookList().size());
+	}
+
+	@Test
+	public void testCheckoutBookRemovesCorrectBook()
+	{
+		ArrayList<Book> expectedBooks = new ArrayList<Book>()
+		{
+			{
+				add(new Book("Hello", "tom", 938));
+				add(new Book("World", "horse", 18312));
+				add(new Book("is", "Aidan", 19284));
+			}
+		};
+		BibliotecaApp bib = new BibliotecaApp();
+		bib.checkoutBook("great", "Megan", 1999);
+		assertEquals(expectedBooks.toString(), bib.getBookList().toString());
 	}
 }
