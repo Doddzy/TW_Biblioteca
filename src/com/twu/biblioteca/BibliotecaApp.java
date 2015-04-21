@@ -30,43 +30,39 @@ public class BibliotecaApp {
         String input;
         System.out
                 .println("Which of the following would you like to do? (1-4) ");
-        System.out.println("1: List books");
-        System.out.println("2: Checkout a book");
-        System.out.println("3: Return a book");
-        System.out.println("4: Quit");
+        System.out.println("1: List available items");
+        System.out.println("2: Checkout an item");
+        System.out.println("3: Return an item");
+        System.out.println("4: Login");
+        System.out.println("5: Quit");
         input = scannerInput.nextLine();
         switch (Integer.parseInt(input)) {
             case 1:
-                printBookDetails();
+                switch (pickBookOrMovie()) {
+                    case Book.ITEM_TYPE:
+                        printBookDetails();
+                        break;
+                    case Movie.ITEM_TYPE:
+                        printMovieDetails();
+                        break;
+                }
+                System.out.println();
                 mainMenu();
                 break;
             case 2:
-                if (pickBookToCheckout())
-                    System.out.println("Thank you! Enjoy the book.");
-                else
-                    System.out.println("That book is not available.");
-
+                pickItemToCheckout();
+                System.out.println();
                 mainMenu();
                 break;
             case 3:
                 returnBook();
                 mainMenu();
                 break;
-            case 4:
-                printMovieDetails();
-                mainMenu();
-                break;
             case 5:
-                if(pickMovieToCheckout())
-                    System.out.println("Thank you! Enjoy the movie.");
-                else
-                    System.out.println("That movie is not available");
-                break;
-            case 6:
                 System.out.println("Please enter your library number (xxx-xxxx)");
                 System.out.println("Please enter password)");
                 break;
-            case 7:
+            case 6:
                 System.out.println("Thank you for using Biblioteca");
                 break;
             default:
@@ -77,7 +73,45 @@ public class BibliotecaApp {
 
     }
 
-    /**TODO **/
+    private int pickBookOrMovie() {
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Please select the category of items you're interested in: ");
+            System.out.println("1: Books");
+            System.out.println("2: Movies");
+            switch (Integer.parseInt(sc.nextLine())) {
+                case 1:
+                    return Book.ITEM_TYPE;
+                case 2:
+                    return Movie.ITEM_TYPE;
+            }
+
+        } catch (Exception e) {
+        }
+
+        System.out.println("Please pick one of the above choices");
+        return pickBookOrMovie();
+    }
+
+    private void pickItemToCheckout() {
+        boolean result = false;
+        switch (pickBookOrMovie()) {
+            case Book.ITEM_TYPE:
+                result = pickBookToCheckout();
+                break;
+            case Movie.ITEM_TYPE:
+                result = pickMovieToCheckout();
+                break;
+        }
+        if (result)
+            System.out.println("Thank you! Please enjoy.");
+        else
+            System.out.println("That item is not currently available.");
+    }
+
+    /**
+     * TODO *
+     */
     private boolean pickMovieToCheckout() {
         return false;
     }

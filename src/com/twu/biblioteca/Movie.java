@@ -1,12 +1,14 @@
 package com.twu.biblioteca;
 
 
-public class Movie extends BibliotecaItem{
-    String  director;
-    int  rating;
+public class Movie extends BibliotecaItem {
+    public static final int ITEM_TYPE = 2;
+    private String director;
+    private int rating;
+
 
     public Movie(String name, int year, String director, int rating) {
-        super(name,year);
+        super(name, year);
         this.director = director;
         this.rating = rating;
     }
@@ -21,7 +23,7 @@ public class Movie extends BibliotecaItem{
     }
 
 
-    public String toString(){
+    public String toString() {
         return super.toString() + ", Director: " + getDirector() + ", Rating: " + getRating();
     }
 }
