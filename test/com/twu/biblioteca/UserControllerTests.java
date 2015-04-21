@@ -36,4 +36,33 @@ public class UserControllerTests {
         };
         assertEquals(expectedUsers.toString(), userController.getUserList().toString());
     }
+
+    @Test
+    public void testLoginAsAdmin() {
+        userController.loginAsAdmin();
+        assertEquals(new UserAccount("000-0000", "admin", "admin", "admin@admin.com", "9999 9999").toString(), userController.getCurrentUser().toString());
+    }
+    @Test
+    public void testLoginFunctions(){
+        userController.loginAttemptWithCredentials("123-4567", "passwordOne");
+
+        assertEquals(new UserAccount("123-4567", "passwordOne", "NameOne", "EmailOne", "phoneOne").toString(),userController.getCurrentUser().toString());
+    }
+
+    @Test
+    public void testLoginChecksCredentials(){
+        userController.loginAttemptWithCredentials("123-4567","passwordOne");
+
+        assertNotEquals(new UserAccount("14332457", "passwordOne", "NameOne", "EmailOne", "phoneOne").toString(), userController.getCurrentUser().toString());
+    }
+
+    @Test
+    public void testCheckIfLoggedInStartsOffFalse(){
+        assertEquals(false, userController.checkIfLoggedIn());
+    }
+    @Test
+    public void testCheckIfLoggedInIsChanging(){
+        userController.loginAttemptWithCredentials("123-4567", "passwordOne");
+        assertEquals(true,userController.checkIfLoggedIn());
+    }
 }

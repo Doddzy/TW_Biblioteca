@@ -18,9 +18,7 @@ public class UserAccountController {
     }
 
     public boolean checkIfLoggedIn() {
-        if (currentUser != null)
-            return true;
-        return false;
+        return currentUser != null;
     }
 
     public void loginAttemptWithCredentials(String userInputID, String userInputPassword) {
