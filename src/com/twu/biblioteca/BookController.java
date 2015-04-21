@@ -3,9 +3,6 @@ package com.twu.biblioteca;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/**
- * Created by user on 22-04-15.
- */
 public class BookController {
     private ArrayList<Book> books;
     private Scanner sc;
@@ -23,6 +20,7 @@ public class BookController {
     public void printAllBookDetails() {
         ArrayList<Book> books = getBookList();
         int curr = 1;
+        System.out.println();
         for (Book book : books) {
 
             System.out.println(curr++ + ": " + book);
