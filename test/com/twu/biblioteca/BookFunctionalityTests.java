@@ -27,7 +27,7 @@ public class BookFunctionalityTests {
 
     @Test
     public void testBooktoString() {
-        assertEquals("Name: Hello Author: tom Year published: 938", new Book(
+        assertEquals("Name: Hello, Year: 938, Author: tom", new Book(
                 "Hello", "tom", 938).toString());
     }
 }

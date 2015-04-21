@@ -1,35 +1,20 @@
 package com.twu.biblioteca;
 
-public class Book
-{
-	public String name, author;
-	public int year;
+public class Book extends BibliotecaItem {
+    public String author;
 
-	public Book(String name, String author, int year)
-	{
-		this.name = name;
-		this.author = author;
-		this.year = year;
-	}
+    public Book(String name, String author, int year) {
+        super(name, year);
+        this.author = author;
+    }
 
-	public String toString()
-	{
-		return "Name: " + getName() + " Author: " + getAuthor()
-				+ " Year published: " + getYear();
-	}
+    public String toString() {
+        return super.toString() + ", Author: " + getAuthor();
+    }
 
-	public String getName()
-	{
-		return name;
-	}
 
-	public String getAuthor()
-	{
-		return author;
-	}
+    public String getAuthor() {
+        return author;
+    }
 
-	public int getYear()
-	{
-		return year;
-	}
 }

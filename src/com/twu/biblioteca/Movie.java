@@ -1,13 +1,12 @@
 package com.twu.biblioteca;
 
 
-public class Movie {
-    String name, director;
-    int year, rating;
+public class Movie extends BibliotecaItem{
+    String  director;
+    int  rating;
 
     public Movie(String name, int year, String director, int rating) {
-        this.name = name;
-        this.year = year;
+        super(name,year);
         this.director = director;
         this.rating = rating;
     }
@@ -16,15 +15,13 @@ public class Movie {
         return director;
     }
 
-    public int getYear() {
-        return year;
-    }
 
     public int getRating() {
         return rating;
     }
 
-    public String getName() {
-        return name;
+
+    public String toString(){
+        return super.toString() + ", Director: " + getDirector() + ", Rating: " + getRating();
     }
 }
