@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BibliotecaApp {
-    public ArrayList<Book> books = new ArrayList<Book>();
-    private ArrayList<Movie> movieList = new ArrayList<Movie>();
+    private ArrayList<Book> books;
+    private ArrayList<Movie> movieList;
+    private Scanner sc;
+    private UserAccountController userController;
 
     public BibliotecaApp() {
+        books = new ArrayList<Book>();
+        movieList = new ArrayList<Movie>();
+
+        userController = new UserAccountController();
+        sc = new Scanner(System.in);
 
         addDefaultBooks();
         addDefaultMovies();
-
     }
 
 
@@ -26,16 +32,19 @@ public class BibliotecaApp {
     }
 
     private void mainMenu() {
-        Scanner scannerInput = new Scanner(System.in);
         String input;
+        boolean quit = false;
         System.out
-                .println("Which of the following would you like to do? (1-4) ");
+                .println("\nWhich of the following would you like to do? (1-4) ");
         System.out.println("1: List available items");
         System.out.println("2: Checkout an item");
         System.out.println("3: Return an item");
-        System.out.println("4: Login");
+        if (userController.getCurrentUser() != null)
+            System.out.println("4: Display user information");
+        else
+            System.out.println("4: Login");
         System.out.println("5: Quit");
-        input = scannerInput.nextLine();
+        input = sc.nextLine();
         switch (Integer.parseInt(input)) {
             case 1:
                 switch (pickBookOrMovie()) {
@@ -46,36 +55,78 @@ public class BibliotecaApp {
                         printMovieDetails();
                         break;
                 }
-                System.out.println();
-                mainMenu();
                 break;
             case 2:
-                pickItemToCheckout();
-                System.out.println();
-                mainMenu();
+                if (userController.checkIfLoggedIn())
+                    if (requestLoginAttempt("This option requires you to be logged in"))
+                        login();
+
+                if (userController.checkIfLoggedIn())
+                    pickItemToCheckout();
                 break;
             case 3:
-                returnBook();
-                mainMenu();
+                if (userController.checkIfLoggedIn())
+                    if (requestLoginAttempt("This option requires you to be logged in"))
+                        login();
+
+                if (userController.checkIfLoggedIn())
+                    returnBook();
                 break;
-            case 5:
-                System.out.println("Please enter your library number (xxx-xxxx)");
-                System.out.println("Please enter password)");
+            case 4:
+                if (userController.checkIfLoggedIn())
+                    login();
+                else
+                    displayCurrentUserInformation();
                 break;
             case 6:
                 System.out.println("Thank you for using Biblioteca");
+                quit = true;
                 break;
             default:
                 System.out.println("Select a valid option!");
-                mainMenu();
 
         }
+        if (!quit)
+            mainMenu();
 
+    }
+
+    private void displayCurrentUserInformation() {
+        System.out.println(userController.getCurrentUser());
+    }
+
+    private void login() {
+        String userInputID, userInputPassword;
+
+        userInputID = getUserInput("Please enter your library number (xxx-xxxx)");
+        userInputPassword = getUserInput("Please enter your password");
+
+        userController.loginAttemptWithCredentials(userInputID, userInputPassword);
+
+        if (userController.checkIfLoggedIn()) {
+            if (requestLoginAttempt("Login failed"))
+                login();
+        } else
+            System.out.println("Successfully logged in as " + userController.getCurrentUser());
+    }
+
+    private boolean requestLoginAttempt(String message) {
+        System.out.println(message + ", would you like to login? (Y/N)");
+        String retry = sc.nextLine();
+        if (retry.equalsIgnoreCase("y"))
+            return true;
+        return false;
+    }
+
+
+
+    private String getUserInput(String message) {
+        System.out.println(message);
+        return sc.nextLine();
     }
 
     private int pickBookOrMovie() {
         try {
-            Scanner sc = new Scanner(System.in);
             System.out.println("Please select the category of items you're interested in: ");
             System.out.println("1: Books");
             System.out.println("2: Movies");
@@ -86,7 +137,7 @@ public class BibliotecaApp {
                     return Movie.ITEM_TYPE;
             }
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         System.out.println("Please pick one of the above choices");
@@ -109,18 +160,10 @@ public class BibliotecaApp {
             System.out.println("That item is not currently available.");
     }
 
-    /**
-     * TODO *
-     */
-    private boolean pickMovieToCheckout() {
-        return false;
-    }
-
 
     private void returnBook() {
         String name, author, year;
         try {
-            Scanner sc = new Scanner(System.in);
             System.out
                     .println("Please enter the Name of the book you wish to return: ");
             name = sc.nextLine();
@@ -149,6 +192,8 @@ public class BibliotecaApp {
         addBook("great", "Megan", 1999);
     }
 
+
+
     public void printBookDetails() {
         ArrayList<Book> books = getBookList();
         int curr = 1;
@@ -165,7 +210,6 @@ public class BibliotecaApp {
     public boolean pickBookToCheckout() {
         try {
             int input;
-            Scanner sc = new Scanner(System.in);
             printBookDetails();
             System.out
                     .println("Please select the book number you wish to checkout");
@@ -187,6 +231,7 @@ public class BibliotecaApp {
                 if (book.getAuthor().equals(author))
                     if (book.getYear() == year) {
                         bookList.remove(curr);
+                        userController.getCurrentUser().checkoutItem(book);
                         return true;
                     }
             curr++;
@@ -211,5 +256,40 @@ public class BibliotecaApp {
 
         for (Movie movie : getMovieList())
             System.out.println(curr++ + ": " + movie);
+    }
+
+    private boolean pickMovieToCheckout() {
+        try {
+            int input;
+            printMovieDetails();
+            System.out
+                    .println("Please select the movie number you wish to checkout");
+            input = Integer.parseInt(sc.nextLine());
+            Movie movie = getMovieList().get(input - 1);
+            return checkoutMovie(movie.getName(), movie.getYear(), movie.getDirector(),
+                    movie.getRating());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean checkoutMovie(String name, int year, String director, int rating) {
+        ArrayList<Movie> movieList = getMovieList();
+        int curr = 0;
+        for (Movie movie : movieList) {
+
+            if (movie.getName().equals(name) && movie.getDirector().equals(director) && movie.getRating() == rating && movie.getYear() == year)
+                movieList.remove(curr);
+            return true;
+        }
+        curr++;
+
+
+        return false;
+    }
+
+
+    public void loginAsAdmin() {
+       userController.loginAsAdmin();
     }
 }

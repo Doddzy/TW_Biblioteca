@@ -9,11 +9,12 @@ import static org.junit.Assert.*;
 
 public class ProgramFunctionalityTests {
 
-    public  BibliotecaApp bib;
+    public BibliotecaApp bib;
 
     @Before
     public void createNewBibliotecaInstance() {
         bib = new BibliotecaApp();
+        bib.loginAsAdmin();
     }
 
     @Test
@@ -102,4 +103,6 @@ public class ProgramFunctionalityTests {
         };
         assertEquals(expectedMovies.toString(), bib.getMovieList().toString());
     }
+
+
 }
