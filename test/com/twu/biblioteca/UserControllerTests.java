@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-/**
- * Created by user on 22-04-15.
- */
 public class UserControllerTests {
     UserAccountController userController;
 
@@ -28,6 +25,7 @@ public class UserControllerTests {
     public void testListUsersReturnsCorrectList() {
         ArrayList<UserAccount> expectedUsers = new ArrayList<UserAccount>() {
             {
+                add(new UserAccount("111-1111", "password", "testName", "testEmail", "testPhoneNumber"));
                 add(new UserAccount("123-4567", "passwordOne", "NameOne", "EmailOne", "phoneOne"));
                 add(new UserAccount("223-4567", "passwordTwo", "NameTwo", "EmailTwo", "phoneTwo"));
                 add(new UserAccount("323-4567", "passwordThree", "NameThree", "EmailThree", "phoneThree"));

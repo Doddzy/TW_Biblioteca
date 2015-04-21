@@ -7,9 +7,6 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by user on 22-04-15.
- */
 public class BookControllerTests {
 
     private BookController bookController;

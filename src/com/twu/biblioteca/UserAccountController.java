@@ -34,6 +34,7 @@ public class UserAccountController {
     }
 
     public void addDefaultUsers() {
+        users.add(new UserAccount("111-1111", "password", "testName", "testEmail", "testPhoneNumber"));
         users.add(new UserAccount("123-4567", "passwordOne", "NameOne", "EmailOne", "phoneOne"));
         users.add(new UserAccount("223-4567", "passwordTwo", "NameTwo", "EmailTwo", "phoneTwo"));
         users.add(new UserAccount("323-4567", "passwordThree", "NameThree", "EmailThree", "phoneThree"));
@@ -42,5 +43,9 @@ public class UserAccountController {
 
     public ArrayList<UserAccount> getUserList() {
         return users;
+    }
+
+    public void currentUserChecksOut(BibliotecaItem checkedOutItem) {
+        currentUser.checkoutItem(checkedOutItem);
     }
 }
