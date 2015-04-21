@@ -4,19 +4,20 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BibliotecaApp {
-    private ArrayList<Book> books;
+
     private ArrayList<Movie> movieList;
     private Scanner sc;
     private UserAccountController userController;
+    private BookController bookController;
 
     public BibliotecaApp() {
-        books = new ArrayList<Book>();
-        movieList = new ArrayList<Movie>();
 
+        movieList = new ArrayList<Movie>();
+        bookController = new BookController();
         userController = new UserAccountController();
         sc = new Scanner(System.in);
 
-        addDefaultBooks();
+
         addDefaultMovies();
     }
 
@@ -49,7 +50,7 @@ public class BibliotecaApp {
             case 1:
                 switch (pickBookOrMovie()) {
                     case Book.ITEM_TYPE:
-                        printBookDetails();
+                        bookController.printAllBookDetails();
                         break;
                     case Movie.ITEM_TYPE:
                         printMovieDetails();
@@ -70,7 +71,7 @@ public class BibliotecaApp {
                         login();
 
                 if (userController.checkIfLoggedIn())
-                    returnBook();
+                    bookController.returnBook();
                 break;
             case 4:
                 if (userController.checkIfLoggedIn())
@@ -89,6 +90,12 @@ public class BibliotecaApp {
         if (!quit)
             mainMenu();
 
+    }
+
+    public void checkoutBook(String name, String author, int year) {
+        Book checkedoutBook = bookController.checkoutBook(name, author, year);
+        if (checkedoutBook != null)
+            userController.getCurrentUser().checkoutItem(checkedoutBook);
     }
 
     private void displayCurrentUserInformation() {
@@ -119,7 +126,6 @@ public class BibliotecaApp {
     }
 
 
-
     private String getUserInput(String message) {
         System.out.println(message);
         return sc.nextLine();
@@ -145,98 +151,19 @@ public class BibliotecaApp {
     }
 
     private void pickItemToCheckout() {
-        boolean result = false;
+        BibliotecaItem checkedOutItem = null;
         switch (pickBookOrMovie()) {
             case Book.ITEM_TYPE:
-                result = pickBookToCheckout();
+                checkedOutItem = bookController.pickBookToCheckout();
                 break;
             case Movie.ITEM_TYPE:
-                result = pickMovieToCheckout();
+                //checkedOutItem = pickMovieToCheckout();
                 break;
         }
-        if (result)
+        if (checkedOutItem != null)
             System.out.println("Thank you! Please enjoy.");
         else
             System.out.println("That item is not currently available.");
-    }
-
-
-    private void returnBook() {
-        String name, author, year;
-        try {
-            System.out
-                    .println("Please enter the Name of the book you wish to return: ");
-            name = sc.nextLine();
-            System.out
-                    .println("Please enter the Author of the book you wish to return: ");
-            author = sc.nextLine();
-            System.out
-                    .println("Please enter the Year of Publication of the book you wish to return: ");
-            year = sc.nextLine();
-            addBook(name, author, Integer.parseInt(year));
-            System.out.println("Thank you for returning the book.");
-        } catch (Exception e) {
-            System.out.println("That is not a valid book to return.");
-        }
-
-    }
-
-    public void addBook(String name, String author, int year) {
-        books.add(new Book(name, author, year));
-    }
-
-    public void addDefaultBooks() {
-        addBook("Hello", "tom", 938);
-        addBook("World", "horse", 18312);
-        addBook("is", "Aidan", 19284);
-        addBook("great", "Megan", 1999);
-    }
-
-
-
-    public void printBookDetails() {
-        ArrayList<Book> books = getBookList();
-        int curr = 1;
-        for (Book book : books) {
-
-            System.out.println(curr++ + ": " + book);
-        }
-    }
-
-    public ArrayList<Book> getBookList() {
-        return books;
-    }
-
-    public boolean pickBookToCheckout() {
-        try {
-            int input;
-            printBookDetails();
-            System.out
-                    .println("Please select the book number you wish to checkout");
-            input = Integer.parseInt(sc.nextLine());
-            Book book = getBookList().get(input - 1);
-            return checkoutBook(book.getName(), book.getAuthor(),
-                    book.getYear());
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public boolean checkoutBook(String name, String author, int year) {
-        ArrayList<Book> bookList = getBookList();
-        int curr = 0;
-        for (Book book : bookList) {
-
-            if (book.getName().equals(name))
-                if (book.getAuthor().equals(author))
-                    if (book.getYear() == year) {
-                        bookList.remove(curr);
-                        userController.getCurrentUser().checkoutItem(book);
-                        return true;
-                    }
-            curr++;
-        }
-        return false;
     }
 
 
@@ -278,11 +205,12 @@ public class BibliotecaApp {
         int curr = 0;
         for (Movie movie : movieList) {
 
-            if (movie.getName().equals(name) && movie.getDirector().equals(director) && movie.getRating() == rating && movie.getYear() == year)
+            if (movie.getName().equals(name) && movie.getDirector().equals(director) && movie.getRating() == rating && movie.getYear() == year) {
                 movieList.remove(curr);
-            return true;
+                return true;
+            }
+            curr++;
         }
-        curr++;
 
 
         return false;
@@ -290,6 +218,6 @@ public class BibliotecaApp {
 
 
     public void loginAsAdmin() {
-       userController.loginAsAdmin();
+        userController.loginAsAdmin();
     }
 }

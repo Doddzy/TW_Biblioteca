@@ -5,7 +5,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class ProgramFunctionalityTests {
 
@@ -28,63 +29,7 @@ public class ProgramFunctionalityTests {
                 bib.getWelcomeMessage());
     }
 
-    @Test
-    public void testListBooksReturnsNonNull() {
-        assertNotEquals(null, bib.getBookList());
-    }
 
-    @Test
-    public void testListBooksReturnsCorrectList() {
-        ArrayList<Book> expectedBooks = new ArrayList<Book>() {
-            {
-                add(new Book("Hello", "tom", 938));
-                add(new Book("World", "horse", 18312));
-                add(new Book("is", "Aidan", 19284));
-                add(new Book("great", "Megan", 1999));
-            }
-        };
-        assertEquals(expectedBooks.toString(), bib.getBookList().toString());
-    }
-
-    @Test
-    public void testAddBookCreatesNewBook() {
-        int bookListSize = bib.getBookList().size();
-        bib.addBook("new", "book", 7363);
-        assertTrue(bookListSize < bib.getBookList().size());
-    }
-
-    @Test
-    public void testCheckoutBookRemovesABook() {
-        int bookListSize = bib.getBookList().size();
-        bib.checkoutBook("great", "Megan", 1999);
-        assertTrue(bookListSize > bib.getBookList().size());
-    }
-
-    @Test
-    public void testCheckoutCanFail() {
-        assertFalse(bib.checkoutBook("fghfghfghfg", "Megan",
-                1999));
-    }
-
-    @Test
-    public void testCheckoutDoesNotRemovesABookOnFail() {
-        int bookListSize = bib.getBookList().size();
-        bib.checkoutBook("greatdsdad", "Megan", 1999);
-        assertEquals(bookListSize, bib.getBookList().size());
-    }
-
-    @Test
-    public void testCheckoutBookRemovesCorrectBook() {
-        ArrayList<Book> expectedBooks = new ArrayList<Book>() {
-            {
-                add(new Book("Hello", "tom", 938));
-                add(new Book("World", "horse", 18312));
-                add(new Book("is", "Aidan", 19284));
-            }
-        };
-        bib.checkoutBook("great", "Megan", 1999);
-        assertEquals(expectedBooks.toString(), bib.getBookList().toString());
-    }
 
     @Test
     public void testListMoviesReturnsNonNull() {
