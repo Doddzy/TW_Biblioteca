@@ -70,7 +70,7 @@ public class BibliotecaApp {
     }
 
     private void returnABook() {
-        if (userController.checkIfLoggedIn())
+        if (!userController.checkIfLoggedIn())
             if (requestLoginAttempt("This option requires you to be logged in"))
                 login();
 
