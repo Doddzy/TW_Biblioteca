@@ -23,7 +23,7 @@ public class ProgramFunctionalityTests {
     @Test
     public void testWelcomeMessageExists() {
         assertEquals("Welcome to Biblioteca",
-                bib.getWelcomeMessage());
+                BibliotecaApp.getWelcomeMessage());
     }
 
 }

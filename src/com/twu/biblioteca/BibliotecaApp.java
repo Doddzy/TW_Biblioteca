@@ -41,20 +41,20 @@ public class BibliotecaApp {
     private void createDefaultMainMenu() {
         mainMenu = new Menu("\nPlease select an option: ", "Please pick one of the above choices");
         mainMenu.addMenuItem("1", "List available items",
-                () -> listAvailableItems());
+                this::listAvailableItems);
         mainMenu.addMenuItem("2", "Checkout an item",
-                () -> checkoutAnItem());
+                this::checkoutAnItem);
         mainMenu.addMenuItem("3", "Return an item",
-                () -> returnABook());
+                this::returnABook);
         mainMenu.addMenuItem("4", "Login",
-                () -> login());
+                this::login);
         mainMenu.addMenuItem("5", "Quit",
-                () -> quit());
+                this::quit);
     }
 
     public static void main(String[] args) {
-        BibliotecaApp bib = new BibliotecaApp();
-        System.out.println(bib.getWelcomeMessage());
+        new BibliotecaApp();
+        System.out.println(getWelcomeMessage());
         while (!quit) {
             Runnable option = mainMenu.showMenu();
             option.run();
@@ -62,7 +62,7 @@ public class BibliotecaApp {
     }
 
 
-    public String getWelcomeMessage() {
+    public static String getWelcomeMessage() {
         return "Welcome to Biblioteca";
     }
 
@@ -103,7 +103,7 @@ public class BibliotecaApp {
     }
 
     private void loggedInUpdateMenu() {
-        mainMenu.addMenuItem("4", "Check user info", () -> displayCurrentUserInformation());
+        mainMenu.addMenuItem("4", "Check user info", this::displayCurrentUserInformation);
     }
 
     private ItemController pickItemType() {
