@@ -3,21 +3,21 @@ package com.twu.biblioteca;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class BookController {
+public class BookController extends ItemController {
     private ArrayList<Book> books;
     private Scanner sc;
 
     public BookController() {
         books = new ArrayList<Book>();
-        addDefaultBooks();
-        sc = new Scanner(System.in);
+        addDefaultItems();
+       
     }
 
     public void addBook(String name, String author, int year) {
         books.add(new Book(name, author, year));
     }
 
-    public void printAllBookDetails() {
+    public void printAvailable() {
         ArrayList<Book> books = getBookList();
         int curr = 1;
         System.out.println();
@@ -31,10 +31,10 @@ public class BookController {
         return books;
     }
 
-    public Book pickBookToCheckout() {
+    public Book pickItemToCheckout() {
         try {
             int input;
-            printAllBookDetails();
+            printAvailable();
             System.out
                     .println("Please select the book number you wish to checkout");
             input = Integer.parseInt(sc.nextLine());
@@ -62,7 +62,7 @@ public class BookController {
         return null;
     }
 
-    public void returnBook() {
+    public void returnItem() {
         String name, author, year;
         try {
             System.out
@@ -82,11 +82,15 @@ public class BookController {
 
     }
 
-    public void addDefaultBooks() {
+    public void addDefaultItems() {
         addBook("Hello", "tom", 938);
         addBook("World", "horse", 18312);
         addBook("is", "Aidan", 19284);
         addBook("great", "Megan", 1999);
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.sc = scanner;
     }
 }
 

@@ -2,7 +2,6 @@ package com.twu.biblioteca;
 
 
 public class Movie extends BibliotecaItem {
-    public static final int ITEM_TYPE = 2;
     private String director;
     private int rating;
 

@@ -3,17 +3,16 @@ package com.twu.biblioteca;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class MovieController {
+public class MovieController extends ItemController {
     private ArrayList<Movie> movieList;
     private Scanner sc;
 
     public MovieController() {
         movieList = new ArrayList<Movie>();
-        sc = new Scanner(System.in);
-        addDefaultMovies();
+        addDefaultItems();
     }
 
-    private void addDefaultMovies() {
+    public void addDefaultItems() {
         movieList.add(new Movie("MovieOne", 2001, "DirectorOne", 1));
         movieList.add(new Movie("MovieTwo", 2002, "DirectorTwo", 2));
         movieList.add(new Movie("MovieThree", 2003, "DirectorThree", 3));
@@ -24,17 +23,17 @@ public class MovieController {
         return movieList;
     }
 
-    public void printMovieDetails() {
+    public void printAvailable() {
         int curr = 1;
         System.out.println();
         for (Movie movie : getMovieList())
             System.out.println(curr++ + ": " + movie);
     }
 
-    public Movie pickMovieToCheckout() {
+    public Movie pickItemToCheckout() {
         try {
             int input;
-            printMovieDetails();
+            printAvailable();
             System.out
                     .println("Please select the movie number you wish to checkout");
             input = Integer.parseInt(sc.nextLine());
@@ -57,5 +56,13 @@ public class MovieController {
             curr++;
         }
         return null;
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.sc = scanner;
+    }
+
+    public void returnItem() {
+        ;
     }
 }

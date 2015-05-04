@@ -9,170 +9,119 @@ public class BibliotecaApp {
     private MovieController movieController;
     private UserAccountController userController;
     private BookController bookController;
+    private ItemController activeItemController;
+
+    private static boolean quit = false;
+    private static Menu mainMenu;
+    private static Menu itemTypeSelection;
+
 
     public BibliotecaApp() {
+        setScanner(new Scanner(System.in));
+
+
+        createDefaultMainMenu();
+        mainMenu.setScanner(sc);
+
+        setupItemSelectionMenu();
+        itemTypeSelection.setScanner(sc);
+
+
         bookController = new BookController();
+        bookController.setScanner(sc);
+
         movieController = new MovieController();
+        movieController.setScanner(sc);
+
         userController = new UserAccountController();
-        sc = new Scanner(System.in);
+        userController.setScanner(sc);
+
     }
 
+    private void createDefaultMainMenu() {
+        mainMenu = new Menu("\nPlease select an option: ", "Please pick one of the above choices");
+        mainMenu.addMenuItem("1", "List available items",
+                () -> listAvailableItems());
+        mainMenu.addMenuItem("2", "Checkout an item",
+                () -> checkoutAnItem());
+        mainMenu.addMenuItem("3", "Return an item",
+                () -> returnABook());
+        mainMenu.addMenuItem("4", "Login",
+                () -> login());
+        mainMenu.addMenuItem("5", "Quit",
+                () -> quit());
+    }
 
     public static void main(String[] args) {
         BibliotecaApp bib = new BibliotecaApp();
         System.out.println(bib.getWelcomeMessage());
-        bib.mainMenu();
+        while (!quit) {
+            Runnable option = mainMenu.showMenu();
+            option.run();
+        }
     }
+
 
     public String getWelcomeMessage() {
         return "Welcome to Biblioteca";
     }
 
-    private void mainMenu() {
-        String selection;
-        boolean quit = false;
 
-        printMainMenu();
-
-        selection = sc.nextLine();
-        switch (Integer.parseInt(selection)) {
-            case 1:
-                listAvailableItems();
-                break;
-
-            case 2:
-                checkoutAnItem();
-                break;
-
-            case 3:
-                returnABook();
-                break;
-
-            case 4:
-                if (!userController.checkIfLoggedIn())
-                    login();
-                else
-                    displayCurrentUserInformation();
-                break;
-
-            case 5:
-                System.out.println("Thank you for using Biblioteca");
-                quit = true;
-                break;
-
-            default:
-                System.out.println("Please select a valid option!");
-
-        }
-        if (!quit)
-            mainMenu();
-
+    public void quit() {
+        quit = true;
     }
 
-    private void returnABook() {
+    public void returnABook() {
         if (!userController.checkIfLoggedIn())
-            if (requestLoginAttempt("This option requires you to be logged in"))
+            if (userController.requestLoginAttempt())
                 login();
 
         if (userController.checkIfLoggedIn())
-            bookController.returnBook();
+            bookController.returnItem();
     }
 
-    private void checkoutAnItem() {
+    public void checkoutAnItem() {
         if (!userController.checkIfLoggedIn())
-            if (requestLoginAttempt("This option requires you to be logged in"))
+            if (userController.requestLoginAttempt())
                 login();
 
         if (userController.checkIfLoggedIn())
             pickItemToCheckout();
     }
 
-    private void listAvailableItems() {
-        switch (pickBookOrMovie()) {
-            case Book.ITEM_TYPE:
-                bookController.printAllBookDetails();
-                break;
-            case Movie.ITEM_TYPE:
-                movieController.printMovieDetails();
-                break;
-        }
+    public void listAvailableItems() {
+        pickItemType().printAvailable();
     }
 
-    public void printMainMenu() {
-        System.out
-                .println("\nWhich of the following would you like to do? (1-4) ");
-        System.out.println("1: List available items");
-        System.out.println("2: Checkout an item");
-        System.out.println("3: Return an item");
-        if (userController.getCurrentUser() != null)
-            System.out.println("4: Display user information");
-        else
-            System.out.println("4: Login");
-        System.out.println("5: Quit");
-    }
-
-    private void displayCurrentUserInformation() {
+    public void displayCurrentUserInformation() {
         System.out.println(userController.getCurrentUser());
     }
 
-    private void login() {
-        String userInputID, userInputPassword;
-
-        userInputID = getUserInput("Please enter your library number (xxx-xxxx)");
-        userInputPassword = getUserInput("Please enter your password");
-
-        userController.loginAttemptWithCredentials(userInputID, userInputPassword);
-
-        if (!userController.checkIfLoggedIn()) {
-            if (requestLoginAttempt("Login failed"))
-                login();
-            return;
-        }
-        if (userController.checkIfLoggedIn())
-            System.out.println("Successfully logged in as " + userController.getCurrentUser());
+    public void login() {
+        if (userController.login())
+            loggedInUpdateMenu();
     }
 
-    private boolean requestLoginAttempt(String message) {
-        System.out.println(message + ", would you like to login? (Y/N)");
-        String retry = sc.nextLine();
-        return (retry.equalsIgnoreCase("y"));
+    private void loggedInUpdateMenu() {
+        mainMenu.addMenuItem("4", "Check user info", () -> displayCurrentUserInformation());
     }
 
+    private ItemController pickItemType() {
+        Runnable option = itemTypeSelection.showMenu();
+        option.run();
 
-    private String getUserInput(String message) {
-        System.out.println(message);
-        return sc.nextLine();
+        return getActiveItemController();
     }
 
-    private int pickBookOrMovie() {
-        try {
-            System.out.println("\nPlease select the category of items you're interested in: ");
-            System.out.println("1: Books");
-            System.out.println("2: Movies");
-            switch (Integer.parseInt(sc.nextLine())) {
-                case 1:
-                    return Book.ITEM_TYPE;
-                case 2:
-                    return Movie.ITEM_TYPE;
-            }
-
-        } catch (Exception ignored) {
-        }
-
-        System.out.println("Please pick one of the above choices");
-        return pickBookOrMovie();
+    private void setupItemSelectionMenu() {
+        itemTypeSelection = new Menu("\nPlease select the category of items you're interested in: ", "Please pick one of the above choices");
+        itemTypeSelection.addMenuItem("1", "Books", () -> setActiveItemController(getBookController()));
+        itemTypeSelection.addMenuItem("2", "Movie", () -> setActiveItemController(getMovieController()));
     }
 
     private void pickItemToCheckout() {
-        BibliotecaItem checkedOutItem = null;
-        switch (pickBookOrMovie()) {
-            case Book.ITEM_TYPE:
-                checkedOutItem = bookController.pickBookToCheckout();
-                break;
-            case Movie.ITEM_TYPE:
-                checkedOutItem = movieController.pickMovieToCheckout();
-                break;
-        }
+        BibliotecaItem checkedOutItem = pickItemType().pickItemToCheckout();
+
         if (checkedOutItem != null) {
             userController.currentUserChecksOut(checkedOutItem);
             System.out.println("Thank you! Please enjoy.");
@@ -182,5 +131,27 @@ public class BibliotecaApp {
 
     public void loginAsAdmin() {
         userController.loginAsAdmin();
+        loggedInUpdateMenu();
     }
+
+    private void setScanner(Scanner scanner) {
+        sc = scanner;
+    }
+
+    public BookController getBookController() {
+        return bookController;
+    }
+
+    public MovieController getMovieController() {
+        return movieController;
+    }
+
+    public ItemController getActiveItemController() {
+        return activeItemController;
+    }
+
+    private void setActiveItemController(ItemController activeItemController) {
+        this.activeItemController = activeItemController;
+    }
+
 }

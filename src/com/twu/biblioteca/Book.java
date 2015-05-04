@@ -1,7 +1,6 @@
 package com.twu.biblioteca;
 
 public class Book extends BibliotecaItem {
-    public static final int ITEM_TYPE = 1;
     private String author;
 
     public Book(String name, String author, int year) {

@@ -2,11 +2,13 @@ package com.twu.biblioteca;
 
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class UserAccountController {
 
     private ArrayList<UserAccount> users;
     private UserAccount currentUser;
+    private Scanner sc;
 
     public UserAccountController() {
         users = new ArrayList<UserAccount>();
@@ -17,16 +19,23 @@ public class UserAccountController {
         return currentUser;
     }
 
+    public void setScanner(Scanner sc) {
+        this.sc = sc;
+    }
+
     public boolean checkIfLoggedIn() {
         return currentUser != null;
     }
 
-    public void loginAttemptWithCredentials(String userInputID, String userInputPassword) {
+    public boolean loginAttemptWithCredentials(String userInputID, String userInputPassword) {
 
         for (UserAccount user : users) {
-            if (user.getId().equals(userInputID) && user.getPassword().equals(userInputPassword))
+            if (user.getId().equals(userInputID) && user.getPassword().equals(userInputPassword)) {
                 currentUser = user;
+                return true;
+            }
         }
+        return false;
     }
 
     public void loginAsAdmin() {
@@ -47,5 +56,34 @@ public class UserAccountController {
 
     public void currentUserChecksOut(BibliotecaItem checkedOutItem) {
         currentUser.checkoutItem(checkedOutItem);
+    }
+
+    public boolean login() {
+        String userInputID, userInputPassword;
+
+        userInputID = getUserInput("Please enter your library number (xxx-xxxx)");
+        userInputPassword = getUserInput("Please enter your password");
+
+        if (!loginAttemptWithCredentials(userInputID, userInputPassword)) {
+            System.out.println("Login failed");
+            if (requestLoginAttempt())
+                return login();
+            else
+                return false;
+        }
+        System.out.println("Successfully logged in as " + getCurrentUser());
+        return true;
+
+    }
+
+    public boolean requestLoginAttempt() {
+        System.out.println("\nwould you like to login? (Y/N)");
+        String retry = sc.nextLine();
+        return (retry.equalsIgnoreCase("y"));
+    }
+
+    private String getUserInput(String message) {
+        System.out.println(message);
+        return sc.nextLine();
     }
 }
